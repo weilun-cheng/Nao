@@ -9,8 +9,8 @@ def move(x,y,angle):
   motionProxy = config.loadProxy("ALMotion")
 
   #Set NAO in stiffness On
-  config.StiffnessOn(motionProxy)
-  config.PoseInit(motionProxy)
+  # config.StiffnessOn(motionProxy)
+  # config.PoseInit(motionProxy)
 
   #####################
   ## Enable arms control by Walk algorithm

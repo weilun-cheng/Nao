@@ -7,8 +7,6 @@ import numpy as np
 from naoqi import ALProxy
 import math
 
-IP="169.254.76.111"
-PORT=9559
 
 low=2
 up=5
@@ -68,7 +66,7 @@ def check(IP, PORT, flag):
             a=d[1][0]
             b=d[1][1]
         if a!=0.0 and b!=0.0:
-            if (a/b)>low and (a/b)<up and area>500:
+            if (a/b)>low and (a/b)<up and area>800:
                 detection=1
                 point=contours[i]
     return detection
@@ -110,6 +108,12 @@ def GetCenter(IP, PORT, flag):
         c=cv2.moments(point)
         x=c['m10']/c['m00']
         y=c['m01']/c['m00']
+    # while(detection==1):
+    #     cv2.drawContours(frame,point,-1,(0,0,255),3)
+    #     cv2.imshow('image',frame)
+    #     if cv2.waitKey(20)&0xFF==27:
+    #         break
+    # cv2.destroyAllWindows()
     return (x,y)
 
 def GetArea(IP, PORT, flag):
@@ -141,7 +145,7 @@ def GetArea(IP, PORT, flag):
             a=d[1][0]
             b=d[1][1]
         if a!=0.0 and b!=0.0:
-            if (a/b)>low and (a/b)<up and area>500:
+            if (a/b)>low and (a/b)<up and area>800:
                 detection=1
                 point=contours[i]
     return area
@@ -167,8 +171,12 @@ def check2(IP, PORT, flag):
         else:
             a=d[1][0]
             b=d[1][1]
-        if a!=0.0 and b!=0.0:
-            if (a/b)>1.4 and (a/b)<1.6 and area>(a*b*0.8):
+        if a!=0.0 and b!=0.0 and flag==1:
+            if a/b>1 and a/b<3 and area<10000 and area>1000:
+                point=contours[i]
+                detection=1
+        if a!=0.0 and b!=0.0 and flag==0:
+            if a/b>1 and a/b<3 and area<20000 and area>10000:
                 point=contours[i]
                 detection=1
     return detection
@@ -183,7 +191,7 @@ def GetCenter2(IP,PORT,flag):
     upper_black = np.array([180, 255, 46])
     res = cv2.inRange(hsv, lower_black, upper_black)
     res= cv2.medianBlur(res,5) 
-    ret, binary = cv2.threshold(res, 127, 255, cv2.THRESH_BINARY)
+    ret, binary = cv2.threshold(res, 2, 255, cv2.THRESH_BINARY)
     contours, hierarchy = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     x=y=0
     for i in range(len(contours)):
@@ -195,8 +203,12 @@ def GetCenter2(IP,PORT,flag):
         else:
             a=d[1][0]
             b=d[1][1]
-        if a!=0.0 and b!=0.0:
-            if (a/b)>1.4 and (a/b)<1.6 and area>(a*b*0.8):
+        if a!=0.0 and b!=0.0 and flag==1:
+            if a/b>1 and a/b<3 and area<10000 and area>1000 and area>a*b*0.6:
+                point=contours[i]
+                detection=1
+        if a!=0.0 and b!=0.0 and flag==0:
+            if a/b>1 and a/b<3 and area<12000 and area>2000 and area>a*b*0.6:
                 point=contours[i]
                 detection=1
     if detection==1:
