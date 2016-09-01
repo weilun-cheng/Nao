@@ -9,7 +9,7 @@ import math
 
 
 low=2
-up=5
+up=6
 
 def getImage(IP, PORT, flag):
     camProxy = ALProxy("ALVideoDevice", IP, PORT)
@@ -23,12 +23,12 @@ def getImage(IP, PORT, flag):
     t0 = time.time()
     naoImage = camProxy.getImageRemote(videoClient)
     t1 = time.time()
-    print "acquisition delay", t1 - t0
+    #print "acquisition delay", t1 - t0
     camProxy.unsubscribe(videoClient)
     # package.
     # Get the image size and pixel array.
-    imageWidth = naoImage[0]
-    imageHeight = naoImage[1]
+    imageWidth = 640
+    imageHeight = 480
     array = naoImage[6]
     # Create a PIL Image from our pixel array.
     im = Image.fromstring("RGB", (imageWidth, imageHeight), array)
@@ -108,12 +108,12 @@ def GetCenter(IP, PORT, flag):
         c=cv2.moments(point)
         x=c['m10']/c['m00']
         y=c['m01']/c['m00']
-    # while(detection==1):
-    #     cv2.drawContours(frame,point,-1,(0,0,255),3)
-    #     cv2.imshow('image',frame)
-    #     if cv2.waitKey(20)&0xFF==27:
-    #         break
-    # cv2.destroyAllWindows()
+    while(detection==1):
+        cv2.drawContours(frame,point,-1,(0,0,255),3)
+        cv2.imshow('image',frame)
+        if cv2.waitKey(20)&0xFF==27:
+            break
+    cv2.destroyAllWindows()
     return (x,y)
 
 def GetArea(IP, PORT, flag):
@@ -145,7 +145,7 @@ def GetArea(IP, PORT, flag):
             a=d[1][0]
             b=d[1][1]
         if a!=0.0 and b!=0.0:
-            if (a/b)>low and (a/b)<up and area>800:
+            if (a/b)>low and (a/b)<up and area>800 and area>(1*b*0.6):
                 detection=1
                 point=contours[i]
     return area
@@ -204,7 +204,7 @@ def GetCenter2(IP,PORT,flag):
             a=d[1][0]
             b=d[1][1]
         if a!=0.0 and b!=0.0 and flag==1:
-            if a/b>1 and a/b<3 and area<10000 and area>1000 and area>a*b*0.6:
+            if a/b>1 and a/b<3 and area<19000 and area>1000:
                 point=contours[i]
                 detection=1
         if a!=0.0 and b!=0.0 and flag==0:
@@ -215,6 +215,12 @@ def GetCenter2(IP,PORT,flag):
         c=cv2.moments(point)
         x=c['m10']/c['m00']
         y=c['m01']/c['m00']
+    while(detection==1):
+        cv2.drawContours(frame,point,-1,(0,0,255),3)
+        cv2.imshow('image',frame)
+        if cv2.waitKey(20)&0xFF==27:
+            break
+    cv2.destroyAllWindows()
     return (x,y)
 
 def GetArea2(IP,PORT,flag):
